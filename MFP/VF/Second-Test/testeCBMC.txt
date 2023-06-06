@@ -1,0 +1,178 @@
+
+*********************************************************
+***   Responda às seguintes questões usando o CBMC    ***
+*********************************************************
+
+
+=========================================================
+===== QUESTÂO 1  (6 pontos)
+=========================================================
+
+Considere o seguinte programa (disponível em questao1.c) para testar se
+todos os elementos de um array estão no intervalo de valores entre x e y inclusive.
+
+int entre (int V[], int n, int x, int y)
+{
+  int i=0;
+  
+  while (i<n) {
+    if (V[i] < x || V[i] > y)
+      return 0;
+    i++;
+  }
+  return 1;
+}
+
+
+void main(void)
+{ 
+  int A[10] = {2,0,4,-28,3,-17,34,-3,9,7};
+  int i;
+
+  i = entre(A,10,0,100);
+
+  for(i=0; i<10; i++)
+    A[i] = i+i;
+
+  i = entre(A,10,0,100);
+}
+
+=========================================================
+1 - Para verificar a segurança da função "entre" relativamente a
+    acessos ilegais a posições do array. Invoque 
+
+cbmc  questao1.c -function entre -bounds-check -pointer-check
+
+Por que razão a execução não termina? 
+
+--------------
+RESPOSTA:
+
+O loop da função está a ser desenrolado infinitamente, sendo necessário indicarmos explicitamente o número de unwinds pretendidos.
+Tal não é necessário quando se testa a partir da main que invoca a função.
+
+=========================================================
+2 - Repita agora a invocação com indicação de que quer desenrolar o ciclo 20 vezes.
+    Indique também como invoca o CBMC neste caso.
+    Por que razão falha agora a verificação? 
+
+--------------
+RESPOSTA:
+cbmc questao1.c -function entre -bounds-check -pointer-check -unwind 20 -unwinding-assertions 
+
+A verificação falha devido ao apontador v ser nulo e, por isso, não ser possível de dereferenciar. 
+
+=========================================================
+3 - Execute o comando
+
+cbmc questao1.c -bounds-check -pointer-check
+
+O que podemos dizer acerca da segurança do programa main? 
+
+--------------
+RESPOSTA:
+
+O programa é correto, para o array determinístico que estamos a utilizar. No entanto, é necessário cuidado a utilizar a função entre, de forma a não a utilizar para um array inválido.
+
+
+
+=========================================================
+4 - Insira  asserções na função main que permitam verificar que
+    as duas invocações da função "entre" retorna o resultado esperado.
+    Indique também como invoca o CBMC para este teste.
+
+--------------
+RESPOSTA:
+
+$ cbmc questao1.c -bounds-check -pointer-check
+
+questao1.c function main
+[main.assertion.1] line 30 assertion i == 0: SUCCESS
+[main.array_bounds.2] line 33 array `A' upper bound in A[(signed long int)i]: SUCCESS
+[main.array_bounds.1] line 33 array `A' lower bound in A[(signed long int)i]: SUCCESS
+[main.assertion.2] line 36 assertion i == 1: SUCCESS
+
+=========================================================
+5 - Insira código que lhe permita investigar se a seguinte fórmula
+    é um invariante do ciclo da função "entre".
+
+    forall k. 0 <= k < i ==> V[k]>=x && V[k]<=y
+
+
+    A que conclusão chegou?
+
+--------------
+RESPOSTA: Confirmou-se que se trata, de facto, de um invariante de ciclo da função "entre". O código utilizado teve em mente 
+a sua otimização, evitando a utilização de um loop.
+
+
+=========================================================
+===== QUESTÂO 2  (4 pontos)
+=========================================================
+
+Considere o seguinte programa (disponível em questao2.c) que
+invoca a função "doubles" sobre um array A pré-definido e
+sobre um array B inicializado explicitamente de forma não-determinística.
+
+void doubles (int A[], int na)
+{
+  int i = 0;
+  
+  while (i<na){
+    A[i] = 2*A[i];
+    i = i+1;
+  }
+}
+
+
+void main(void)
+{ 
+  int A[10] = {2,0,4,-28,3,-17,34,-3,9,7};
+  int B[10];
+  int i;
+
+  doubles(A,10);
+  
+  for (i=0; i<10; i++) 
+      B[i] = nondet_int(); 
+
+  doubles(B,10);
+}
+
+
+=========================================================
+1 - Use o CBMC para verificar a segurança do programa (função main)  
+    relativamente a problemas de overflow.
+    Indique como invoca o CBMC para este teste.    
+    A que conclusão chegou? 
+
+--------------
+RESPOSTA:
+
+$ ./cbmc questao2.c -signed-overflow-check
+...
+** Results:
+questao2.c function doubles
+[doubles.overflow.1] line 7 arithmetic overflow on signed * in 2 * A[(signed long int)i]: FAILURE
+[doubles.overflow.2] line 8 arithmetic overflow on signed + in i + 1: SUCCESS
+
+questao2.c function main
+[main.overflow.1] line 21 arithmetic overflow on signed + in i + 1: SUCCESS
+
+** 1 of 3 failed (2 iterations)
+
+Podemos notar que de facto existem problemas de overflow, provavelmente no cálculo de doubles para o array não determinístico. A 
+multiplicação do valor por 2 causa com que seja < INT_MIN ou > INT_MAX.
+
+=========================================================
+2- Insira código na função main que lhe permita investigar se o resultado
+   da invocação  doubles(A,10)  calcula de facto o dobro de cada elemento do array.
+   Indique também como invoca o CBMC para este teste.
+   A que conclusão chegou? 
+
+--------------
+RESPOSTA:
+
+$ ./cbmc questao2.c -signed-overflow-check
+
+Concluí que para arrays determinísticos, de facto cada elemento do array é substituído pelo seu dobro em A

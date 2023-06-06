@@ -1,0 +1,151 @@
+
+*********************************************************
+***  Responda às seguintes questões usando o FRAMA-C  ***
+*********************************************************
+
+
+=========================================================
+===== QUESTÂO 3  (6 pontos)
+=========================================================
+
+Considere o seguinte programa (disponível em questao3.c) para testar se
+todos os elementos de um array estão no intervalo de valores entre x e y inclusive.
+
+
+/*@  requires n>=0 && \valid(V+(0..(n-1)));
+     ensures \result==1 <==> 
+                  (\forall integer k; 0<=k<n ==> V[k]>=x && V[k]<=y);
+     assigns \nothing;
+ */
+int entre (int V[], int n, int x, int y)
+{
+  int i=0;
+  
+  while (i<n) {
+    if (V[i] < x || V[i] > y)
+      return 0;
+    i++;
+  }
+  return 1;
+}
+
+=========================================================
+1 - Experimente fazer a verificação deste programa tal como está.
+    Porque razão a prova falha?
+    Acrescente anotações de forma a conseguir provar a correcção do 
+    programa face ao seu contrato.
+
+--------------
+RESPOSTA:
+
+A pós-condiçã́o do programa não é forte o suficiente.   
+Será necessário reforçar este contrato com invariantes de ciclo.
+Para além disso, necessita de informação mais explícita dos resultados possíveis e deixar evidente as condições necessárias e 
+suficientes para \result == 0
+
+
+=========================================================
+2 - Considere agora a seguinte função main anotada e tente verifica-la.
+    Provavelmente vai apenas conseguir provar o primeiro assert.
+
+void main(void){
+ 
+  int A[10] = {2,0,4,-28,3,-17,34,-3,9,7};
+  int i;
+
+  i = entre(A,10,0,100);
+  //@ assert i!=1;     
+  //@ assert i==0;     
+
+
+  for(i=0; i<10; i++)
+    A[i] = i+i;
+
+  i = entre(A,10,0,100);
+  //@ assert i==1;
+}
+
+
+-------------------------------------------------------------
+2.1 - Porque é que o segundo assert não se consegue demonstrar?
+      Enriqueça o contrato da função "entre" de forma a conseguir provar este assert.
+      
+--------------
+RESPOSTA:
+Não existe uma especificação no contrato da condição necessária e/ou suficiente para o \result == 0.
+
+
+
+-------------------------------------------------------------
+2.2 - Porque é que o terceiro assert não se consegue demonstrar?
+      Acrescente à função main as anotações necessárias para completar a prova com sucesso.
+
+--------------
+RESPOSTA:
+Foram executadas mudanças ao array A num ciclo, logo será necessário, através de invariantes, explicitar o comportamento do ciclo,
+que irá escrever em A[0..9] e alterar o valor de i.
+
+
+
+=========================================================
+3 - Defina em ACSL um predicado ENTRE(A,len,a,b) que é verdadeiro quando
+    no array A, de tamanho len, todos os valores estão entre a e b.
+    De seguida, escreva o contrato e o invariante de ciclo da função
+    entre_alinea3 (igual à anterior) de forma a usar o predicado ENTRE que definiu.
+
+--------------
+RESPOSTA:
+Resolvido no ficheiro .c
+
+
+
+
+
+=========================================================
+===== QUESTÂO 4    (4 pontos)
+=========================================================
+
+
+Considere agora a seguinte função (disponível em questao4.c) que
+dobra o valor de cada um dos elementos de um array de inteiros.   
+
+void doubles (int A[], int na)
+{
+  int i = 0;
+  
+  while (i<na){
+    A[i] = 2*A[i];
+    i = i+1;
+  }
+}
+
+
+=========================================================
+1- Escreva um contrato que caracterize de forma completa o
+   comportamento desta função.
+
+--------------
+RESPOSTA:
+No ficheiro .c
+
+
+
+
+=========================================================
+2- Prove a correcção da função em ordem ao contrato que escreveu.
+   No caso de não conseguir completar a prova na totalidade, identifique
+   claramente as VCs que estão a falhar e indique o que já fez para
+   tentar contornar o problema. O que acha que pode estar a acontecer? 
+
+--------------
+RESPOSTA:
+No ficheiro .c
+
+
+
+
+
+
+
+
+

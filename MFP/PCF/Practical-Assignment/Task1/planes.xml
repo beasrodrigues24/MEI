@@ -59,7 +59,7 @@ bool isTakeOff;</declaration>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id3"/>
-			<label kind="guard" x="-59" y="-119">isTakeOff == true</label>
+			<label kind="guard" x="-85" y="-119">isTakeOff == true</label>
 		</transition>
 		<transition>
 			<source ref="id6"/>
@@ -76,8 +76,8 @@ bool isTakeOff;</declaration>
 		<transition>
 			<source ref="id4"/>
 			<target ref="id0"/>
-			<label kind="guard" x="-544" y="-374">x &gt;= 4</label>
-			<label kind="synchronisation" x="-535" y="-357">gone!</label>
+			<label kind="guard" x="-518" y="-374">x &gt;= 4</label>
+			<label kind="synchronisation" x="-518" y="-357">gone!</label>
 			<label kind="assignment" x="-525" y="-322">x:=0</label>
 			<nail x="-807" y="-331"/>
 		</transition>
@@ -102,7 +102,7 @@ isTakeOff:=false</label>
 			<source ref="id1"/>
 			<target ref="id7"/>
 			<label kind="guard" x="-442" y="-110">x &gt;= 5</label>
-			<label kind="assignment" x="-433" y="-93">x:=0</label>
+			<label kind="assignment" x="-442" y="-93">x:=0</label>
 		</transition>
 		<transition>
 			<source ref="id1"/>
@@ -124,7 +124,6 @@ isTakeOff:=true</label>
 		<name>Controller</name>
 		<declaration>clock x;
 planeID current;
-bool free = true;
 
 int in = 0;
 </declaration>
@@ -137,44 +136,27 @@ int in = 0;
 		</location>
 		<init ref="id8"/>
 		<transition>
-			<source ref="id9"/>
-			<target ref="id9"/>
-			<label kind="guard" x="-696" y="-59">in == 0</label>
-			<label kind="assignment" x="-705" y="-34">free := true</label>
-			<nail x="-730" y="-51"/>
-			<nail x="-637" y="-119"/>
-		</transition>
-		<transition>
 			<source ref="id8"/>
 			<target ref="id8"/>
-			<label kind="guard" x="-680" y="-535">in == 0</label>
-			<label kind="assignment" x="-680" y="-518">free:=true</label>
-			<nail x="-722" y="-518"/>
-			<nail x="-637" y="-484"/>
-		</transition>
-		<transition>
-			<source ref="id8"/>
-			<target ref="id8"/>
-			<label kind="synchronisation" x="-901" y="-535">gone?</label>
-			<label kind="assignment" x="-901" y="-518">in--</label>
-			<nail x="-808" y="-519"/>
-			<nail x="-901" y="-485"/>
+			<label kind="synchronisation" x="-773" y="-544">gone?</label>
+			<label kind="assignment" x="-773" y="-527">in--</label>
+			<nail x="-680" y="-510"/>
+			<nail x="-841" y="-510"/>
 		</transition>
 		<transition>
 			<source ref="id9"/>
 			<target ref="id9"/>
-			<label kind="synchronisation" x="-917" y="-77">gone?</label>
-			<label kind="assignment" x="-909" y="-60">in--</label>
-			<nail x="-909" y="-102"/>
-			<nail x="-824" y="-51"/>
+			<label kind="synchronisation" x="-773" y="-59">gone?</label>
+			<label kind="assignment" x="-765" y="-42">in--</label>
+			<nail x="-833" y="-68"/>
+			<nail x="-688" y="-68"/>
 		</transition>
 		<transition>
 			<source ref="id9"/>
 			<target ref="id8"/>
-			<label kind="guard" x="-1096" y="-314">in == 1 || x &gt;= 5</label>
-			<label kind="assignment" x="-1071" y="-289">free:=false</label>
-			<nail x="-986" y="-161"/>
-			<nail x="-986" y="-425"/>
+			<label kind="guard" x="-1130" y="-314">in &lt;= 1 || x &gt;= 5</label>
+			<nail x="-1020" y="-161"/>
+			<nail x="-1020" y="-425"/>
 		</transition>
 		<transition>
 			<source ref="id9"/>

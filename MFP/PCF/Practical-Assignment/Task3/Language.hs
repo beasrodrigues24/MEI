@@ -43,4 +43,4 @@ teste5 = Wh lexy teste3 -- D [(X=6;Y=2;Z=-100,0.25),(X=5;Y=3;Z=-100,0.25),(X=2;Y
 
 -- Run Tests
 showWsem :: Dist (Vars -> Double) -> Vars -> Dist (Double)
-showWsem p x = mkD [(m x, p) | (m, p) <- unD p] 
+showWsem (D p) x = mkD [(m x, p) | (m, p) <- p] 

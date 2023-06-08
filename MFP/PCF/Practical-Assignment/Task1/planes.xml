@@ -2,170 +2,195 @@
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
-int free=1;
-chan land;
-chan wait;
-chan take_off;
-chan gone;
+
+//No. of planes 
+const int N = 2;
+//Generate plane ids
+typedef int [0, N-1] trainID;
+
+// Generates channels
+chan land[N], take_off[N], wait[N], gone;
+
 </declaration>
 	<template>
 		<name x="5" y="5">Plane</name>
+		<parameter>const trainID id</parameter>
 		<declaration>// Place local declarations here.
 clock x;</declaration>
-		<location id="id0" x="-595" y="-102">
-			<name x="-620" y="-136">Parked</name>
+		<location id="id0" x="-806" y="-93">
+			<name x="-831" y="-127">Parked</name>
 		</location>
-		<location id="id1" x="-280" y="-102">
-			<name x="-305" y="-136">Waiting</name>
+		<location id="id1" x="-491" y="-93">
+			<name x="-516" y="-127">Approaching</name>
+			<label kind="invariant" x="-501" y="-76">x&lt;10</label>
 		</location>
-		<location id="id2" x="467" y="-110">
-			<name x="457" y="-144">Flying</name>
+		<location id="id2" x="256" y="-101">
+			<name x="246" y="-135">Flying</name>
+			<label kind="invariant" x="246" y="-84">x &lt; 7</label>
 		</location>
-		<location id="id3" x="799" y="-110">
-			<name x="774" y="-144">Waiting_For_Landing</name>
+		<location id="id3" x="588" y="-101">
+			<name x="563" y="-135">Approaching_Landing</name>
+			<label kind="invariant" x="578" y="-84">x&lt;10</label>
 		</location>
-		<location id="id4" x="94" y="-102">
-			<name x="34" y="-144">Preparing_Take_Off</name>
+		<location id="id4" x="-117" y="-93">
+			<name x="-177" y="-135">Preparing_Take_Off</name>
+			<label kind="invariant" x="-127" y="-76">x &lt; 3</label>
 		</location>
-		<location id="id5" x="-68" y="-102">
-			<name x="-78" y="-136">Approved</name>
+		<location id="id5" x="588" y="-416">
+			<name x="596" y="-450">Landing</name>
+			<label kind="invariant" x="578" y="-399">x &lt; 6</label>
 		</location>
-		<location id="id6" x="799" y="-340">
-			<name x="807" y="-374">Approved_Landing</name>
+		<location id="id6" x="-314" y="34">
+			<name x="-324" y="0">Waiting</name>
+			<label kind="invariant" x="-331" y="51">x &lt; 7</label>
+		</location>
+		<location id="id7" x="758" y="-263">
+			<name x="748" y="-297">Waiting_Landing</name>
+			<label kind="invariant" x="748" y="-246">x &lt; 7</label>
 		</location>
 		<init ref="id0"/>
 		<transition>
-			<source ref="id3"/>
-			<target ref="id3"/>
-			<label kind="synchronisation" x="807" y="-76">wait?</label>
-			<label kind="assignment" x="807" y="-59">x:=0</label>
-			<nail x="926" y="-42"/>
-			<nail x="773" y="34"/>
-		</transition>
-		<transition>
-			<source ref="id3"/>
-			<target ref="id6"/>
-			<label kind="guard" x="807" y="-255">x &gt;= 5</label>
-			<label kind="assignment" x="807" y="-229">x:=0</label>
-		</transition>
-		<transition>
-			<source ref="id5"/>
-			<target ref="id4"/>
-			<label kind="guard" x="-8" y="-127">x &gt;= 5</label>
-			<label kind="assignment" x="0" y="-102">x:=0</label>
+			<source ref="id7"/>
+			<target ref="id5"/>
+			<label kind="guard" x="697" y="-442">x &gt;= 5</label>
+			<label kind="assignment" x="714" y="-416">x:=0</label>
+			<nail x="758" y="-416"/>
 		</transition>
 		<transition>
 			<source ref="id6"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-238" y="8">x &gt;= 5</label>
+			<label kind="assignment" x="-228" y="34">x:=0</label>
+			<nail x="-118" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id7"/>
+			<label kind="guard" x="680" y="-93">x &lt;= 5</label>
+			<label kind="synchronisation" x="680" y="-68">wait[id]?</label>
+			<label kind="assignment" x="680" y="-51">x:=0</label>
+			<nail x="758" y="-101"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="guard" x="595" y="-280">x &gt;= 5</label>
+			<label kind="assignment" x="595" y="-263">x:=0</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
 			<target ref="id0"/>
-			<label kind="select" x="229" y="-493">landing_time : int[4,6]</label>
-			<label kind="guard" x="246" y="-476">x &gt;= landing_time</label>
-			<label kind="synchronisation" x="280" y="-510">gone!</label>
-			<label kind="assignment" x="272" y="-450">x:=0</label>
-			<nail x="799" y="-451"/>
-			<nail x="-603" y="-450"/>
+			<label kind="guard" x="59" y="-467">x &gt;= 4</label>
+			<label kind="synchronisation" x="59" y="-493">gone!</label>
+			<label kind="assignment" x="61" y="-441">x:=0</label>
+			<nail x="588" y="-442"/>
+			<nail x="-814" y="-441"/>
 		</transition>
 		<transition>
 			<source ref="id4"/>
 			<target ref="id2"/>
-			<label kind="select" x="195" y="-170">take_off_time : int[1,3]</label>
-			<label kind="guard" x="204" y="-153">x&gt;=take_off_time</label>
-			<label kind="synchronisation" x="246" y="-136">gone!</label>
-			<label kind="assignment" x="255" y="-102">x:=0</label>
+			<label kind="guard" x="34" y="-144">x&gt;=1</label>
+			<label kind="synchronisation" x="35" y="-127">gone!</label>
+			<label kind="assignment" x="44" y="-93">x:=0</label>
 		</transition>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id3"/>
-			<label kind="select" x="569" y="-170">response_time : int[5,7]</label>
-			<label kind="guard" x="578" y="-153">x &gt;= response_time</label>
-			<label kind="synchronisation" x="629" y="-136">land!</label>
-			<label kind="assignment" x="654" y="-110">x := 0</label>
+			<label kind="guard" x="408" y="-144">x &gt;= 5</label>
+			<label kind="synchronisation" x="408" y="-127">land[id]!</label>
+			<label kind="assignment" x="418" y="-101">x := 0</label>
 		</transition>
 		<transition>
 			<source ref="id1"/>
-			<target ref="id5"/>
-			<label kind="guard" x="-178" y="-127">x &gt;=5</label>
-			<label kind="assignment" x="-178" y="-102">x:=0</label>
-			<nail x="-93" y="-102"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-323" y="-119">x &gt;= 5</label>
+			<label kind="assignment" x="-314" y="-93">x:=0</label>
+			<nail x="-330" y="-93"/>
 		</transition>
 		<transition>
 			<source ref="id1"/>
-			<target ref="id1"/>
-			<label kind="synchronisation" x="-364" y="-18">wait?</label>
-			<label kind="assignment" x="-374" y="8">x:=0</label>
-			<nail x="-289" y="25"/>
-			<nail x="-441" y="-26"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-484" y="-42">x &lt;= 5</label>
+			<label kind="synchronisation" x="-483" y="-25">wait[id]?</label>
+			<label kind="assignment" x="-483" y="-8">x:=0</label>
+			<nail x="-491" y="34"/>
 		</transition>
 		<transition>
 			<source ref="id0"/>
 			<target ref="id1"/>
-			<label kind="synchronisation" x="-476" y="-119">take_off!</label>
-			<label kind="assignment" x="-459" y="-102">x:=0</label>
+			<label kind="synchronisation" x="-671" y="-136">take_off[id]!</label>
+			<label kind="assignment" x="-663" y="-119">x:=0</label>
 		</transition>
 	</template>
 	<template>
 		<name>Controller</name>
-		<declaration>clock x;</declaration>
-		<location id="id7" x="-858" y="-127">
-			<name x="-868" y="-161">IDLE</name>
+		<declaration>clock x;
+trainID current;
+bool free = true;
+</declaration>
+		<location id="id8" x="-765" y="-425">
+			<name x="-775" y="-459">IDLE</name>
 		</location>
-		<location id="id8" x="-391" y="-331">
-			<name x="-401" y="-365">Evaluating</name>
-			<label kind="invariant" x="-401" y="-314">x &lt;= 5</label>
+		<location id="id9" x="-765" y="-161">
+			<name x="-775" y="-195">Evaluating</name>
+			<label kind="invariant" x="-782" y="-144">x &lt; 5</label>
 		</location>
-		<init ref="id7"/>
+		<init ref="id8"/>
 		<transition>
 			<source ref="id8"/>
 			<target ref="id8"/>
-			<label kind="synchronisation" x="-314" y="-442">gone!</label>
-			<label kind="assignment" x="-357" y="-408">free := 1</label>
-			<nail x="-255" y="-340"/>
-			<nail x="-365" y="-493"/>
+			<label kind="synchronisation" x="-790" y="-552">gone?</label>
+			<label kind="assignment" x="-790" y="-535">free:=true</label>
+			<nail x="-688" y="-518"/>
+			<nail x="-841" y="-518"/>
 		</transition>
 		<transition>
-			<source ref="id7"/>
+			<source ref="id9"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-722" y="-68">gone?</label>
+			<label kind="assignment" x="-722" y="-51">free:=true</label>
+			<nail x="-833" y="-94"/>
+			<nail x="-765" y="-25"/>
+			<nail x="-697" y="-102"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
 			<target ref="id8"/>
-			<label kind="synchronisation" x="-705" y="-289">take_off?</label>
-			<nail x="-850" y="-187"/>
-			<nail x="-476" y="-357"/>
+			<label kind="assignment" x="-1062" y="-289">free:=false</label>
+			<nail x="-986" y="-161"/>
+			<nail x="-986" y="-425"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-501" y="-314">free == false</label>
+			<label kind="synchronisation" x="-501" y="-297">wait[current]!</label>
+			<nail x="-510" y="-161"/>
+			<nail x="-510" y="-425"/>
 		</transition>
 		<transition>
 			<source ref="id8"/>
-			<target ref="id7"/>
-			<label kind="guard" x="-620" y="-187">free == 0 &amp;&amp; x &lt; 5</label>
-			<label kind="synchronisation" x="-561" y="-170">wait!</label>
-			<label kind="assignment" x="-527" y="-144">x:=0</label>
-			<nail x="-348" y="-238"/>
-			<nail x="-688" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id7"/>
-			<target ref="id7"/>
-			<label kind="synchronisation" x="-1028" y="-204">gone?</label>
-			<label kind="assignment" x="-1037" y="-170">free := 1</label>
-			<nail x="-1088" y="-204"/>
-			<nail x="-1088" y="-51"/>
+			<target ref="id9"/>
+			<label kind="select" x="-680" y="-399">e : trainID</label>
+			<label kind="synchronisation" x="-680" y="-382">land[e]?</label>
+			<label kind="assignment" x="-646" y="-365">x:=0,
+current:=e</label>
+			<nail x="-620" y="-306"/>
 		</transition>
 		<transition>
 			<source ref="id8"/>
-			<target ref="id7"/>
-			<label kind="guard" x="-782" y="-382">free == 1 || x &gt;= 5</label>
-			<label kind="assignment" x="-739" y="-331">x:=0,free:=0</label>
-			<nail x="-484" y="-450"/>
-			<nail x="-943" y="-238"/>
-		</transition>
-		<transition>
-			<source ref="id7"/>
-			<target ref="id8"/>
-			<label kind="synchronisation" x="-654" y="-255">land?</label>
-			<label kind="assignment" x="-620" y="-229">x:=0</label>
+			<target ref="id9"/>
+			<label kind="select" x="-892" y="-399">e : trainID</label>
+			<label kind="synchronisation" x="-909" y="-382">take_off[e]?</label>
+			<label kind="assignment" x="-926" y="-365">x:=0,
+current:=e</label>
+			<nail x="-901" y="-297"/>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
-Process1 = Plane();
-Process2 = Controller();
-Process3 = Plane();
+
 // List one or more processes to be composed into a system.
-system Process1, Process2, Process3;
+system Plane, Controller;
     </system>
 	<queries>
 		<query>

@@ -1,0 +1,44 @@
+module Inc
+
+  use int.Int
+
+  val ref x : int
+  val ref pc0 : int
+  val ref pc1 : int
+
+  let main()
+    requires { true }
+    ensures  { x = 2 }
+  =
+    x <- 0;
+    pc0 <- 0;
+    pc1 <- 0;
+    while not (pc0 = 1 && pc1 = 1) do
+        invariant { x = pc0 + pc1 /\ 0 <= pc0 <= 1 /\ 0 <= pc1 <= 1 }
+        variant   { 2 - x}
+        if pc0 = 0 && pc1 = 0 then
+        begin
+            if any bool then 
+            begin
+                x <- x + 1;
+                pc0 <- 1;
+            end 
+            else 
+            begin
+                x <- x + 1;
+                pc1 <- 1;
+            end;
+        end
+        else if pc0 = 0 then
+        begin
+            x <- x + 1;
+            pc0 <- 1;
+        end
+        else
+        begin
+            x <- x + 1;
+            pc1 <- 1;
+        end;
+    done;
+end
+

@@ -1,0 +1,27 @@
+module Multiplication
+
+  use int.Int
+  use int.EuclideanDivision
+
+  val a : int
+  val b : int
+  val ref r : int
+  val ref x : int
+  val ref y : int
+
+  let main()
+    requires { a >= 0 }
+    ensures  { r = a * b }
+  =
+    x <- a;
+    y <- b;
+    r <- 0;
+    while x <> 0 do
+      invariant { (x * y) + r = a * b /\ x >= 0}
+      variant   { x }
+      if (mod x 2 = 1) then r <- r + y;
+      x <- div x 2;
+      y <- y * 2;
+    done;
+
+end

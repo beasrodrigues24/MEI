@@ -1,0 +1,23 @@
+module Multiplication
+
+  use int.Int
+
+  val a : int
+  val b : int
+  val ref r : int
+  val ref n : int
+
+  let main()
+    requires { a >= 0 }
+    ensures  { r = a * b /\ n = 0 }
+  =
+    n <- a;
+    r <- 0;
+    while n > 0 do
+      invariant { r = (a - n) * b /\ n >= 0 }
+      variant   { n }
+      n <- n - 1;
+      r <- r + b;
+    done;
+
+end

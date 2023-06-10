@@ -1,0 +1,29 @@
+module Fibonacci
+
+  use int.Int
+
+  function fib int : int
+  axiom fib0: fib 0 = 0
+  axiom fib1: fib 1 = 1
+  axiom fibn: forall n:int. n >= 2 -> fib n = fib (n-1) + fib (n-2)
+  
+  val n : int
+  val ref a : int
+  val ref r : int
+  val ref x : int
+
+  let main()
+    requires { n >= 0 }
+    ensures  { r = fib n }
+  =
+    r <- 0;
+    a <- 1;
+    x <- 0;
+    while x < n do
+      invariant { r = fib(x) /\ a = fib(x + 1)  /\ x <= n /\ x >= 0 }
+      variant   { n - x }
+      x <- x + 1;
+      r , a <- a , r + a
+    done;
+
+end

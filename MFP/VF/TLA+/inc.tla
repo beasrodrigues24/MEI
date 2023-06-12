@@ -1,14 +1,14 @@
--------------------------------- MODULE Inc --------------------------------
+-------------------------------- MODULE inc --------------------------------
 
 EXTENDS Integers
 
 CONSTANT N
 
-ASSUME N
+ASSUME N > 0
 
 VARIABLES x,y,pc
 
-TypeOK == [] (x \in Int /\ y \in [1..N -> Int] /\ pc \in [1..N -> 0..1])
+TypeOK == [] (x \in Int /\ y \in [1..N -> Int] /\ pc \in [1..N -> 0..2])
 
 Init == x = 0 /\ pc = [i \in 1..N |-> 0] /\ y = [i \in 1..N |-> 0]
 
@@ -44,5 +44,5 @@ Termination == <> Finish
 
 =============================================================================
 \* Modification History
-\* Last modified Mon Jun 12 16:27:55 WEST 2023 by beasrodrigues24
+\* Last modified Mon Jun 12 17:56:55 WEST 2023 by beasrodrigues24
 \* Created Mon Jun 12 14:46:09 WEST 2023 by beasrodrigues24

@@ -34,11 +34,11 @@ vars == <<sem,pc>>
 
 Algorithm == Init /\ [][Next]_vars /\ SF_vars(Next)
 
-MutualExclusion == [] \A i,j \in 0..N-1 : pc[i] = 2 /\ pc[j] = 2 => i = j
+MutualExclusion == [] \A i,j \in 0..N-1 : (pc[i] = 2 /\ pc[j] = 2) => i = j
 
 NoStarvation == [] \A i \in 0..N-1 : pc[i] = 1 => <> (pc[i] = 2)
 
 =============================================================================
 \* Modification History
-\* Last modified Mon Jun 12 16:27:42 WEST 2023 by beasrodrigues24
+\* Last modified Mon Jun 12 17:59:41 WEST 2023 by beasrodrigues24
 \* Created Mon Jun 12 15:51:16 WEST 2023 by beasrodrigues24

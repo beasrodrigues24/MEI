@@ -1,9 +1,15 @@
 # MEI 
 
-This repository holds some of my work in the majors I selected. 
+Contains practical assignments, exercises and other materials about the majors I selected for my master's degree in UMinho.
 
-[Formal Methods](MFP)
+## 1<sup>st</sup> Year
 
-[VF](MFP/VF) - Formal Verification 
+### 2<sup>nd</sup> Semester
 
-[PCF](MFP/PCF) - Cyber-Physical Programming
+#### Major: [Formal Programming Methods](MFP)
+
+[**VF**](MFP/VF) -> Formal Verification 
+
+[**PCF**](MFP/PCF) -> Cyber-Physical Programming
+
+[**CSI**](MFP/CSI) -> Information Systems Calculus

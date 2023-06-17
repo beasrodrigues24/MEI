@@ -1,7 +1,5 @@
 # Lógica Temporal Linear
 
-Nota: Exercícios não verificados
-
 # Definição
 
 Para especificar propriedades de algoritmos reativos, concorrentes ou distribuídos, é frequente usar-se lógica temporal linear (*Linear Temporal Logic*). A ideia de especificar propriedades de algoritmos desta natureza usando lógica temporal deve-se a [Amir Pnueli](https://en.wikipedia.org/wiki/Amir_Pnueli), ideia pela qual recebeu um prémio Turing em 1996. Ao contrário das 
@@ -98,14 +96,14 @@ var
 - Se inicialmente `a` for não negativo, no final da execução a variável `r` tem o produto de `a` e `b`.
 
 <aside>
-💡 □(a < 0 ⇒ (pc = 3 /\ ◊(r = a * b)))
+💡 □(pc = 3 ⇒ r = a * b)
 
 </aside>
 
 - O predicado `r = n * b` é um invariante do ciclo.
 
 <aside>
-💡 □◊(r = n*b)
+💡 □(pc = 0 ⇒ r = n*b)
 
 </aside>
 
@@ -137,7 +135,7 @@ var
 - Se inicialmente `n` for negativo o valor de `r` será recorrentemente `0` e recorrentemente `1`.
 
 <aside>
-💡 □(n < 0 ⇒ ◊(r = 0 || r = 1 ))
+💡 n < 0 ⇒ □◊(r = 0 || r = 1 )
 - liveness
 
 </aside>
@@ -145,7 +143,7 @@ var
 - Se inicialmente `n` for par então quando o algoritmo termina `r` é `0`.
 
 <aside>
-💡 □(n%2 == 0 ⇒ ◊(pc = 1 /\ r = 0))
+💡 n%2 == 0 ⇒ □(pc = 1 ⇒ r = 0)
 - safety
 
 </aside>
@@ -153,14 +151,15 @@ var
 - Enquanto o `n` for não negativo o valor de `r` está sempre a oscilar entre `0` e `1`.
 
 <aside>
-💡 □(n ≥ 0 ⇒ □◊(r = 0 || r = 1)) - liveness
+💡□(n ≥ 0 ⇒ ((r=0 ⇒ ◯(r=1))/\ (r=1 ⇒ ◯(r=0)) 
+- liveness
 
 </aside>
 
 - O algoritmo termina logo que o `n` seja negativo.
 
 <aside>
-💡 □(n < 0 ⇒ ◊□(pc = 3)) - liveness
+💡 □(n < 0 ⇒ ◯(pc = 1)) - liveness
 
 </aside>
 

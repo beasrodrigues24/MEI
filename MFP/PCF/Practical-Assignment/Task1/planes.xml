@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
 
@@ -10,7 +10,6 @@ typedef int [0, N-1] planeID;
 
 // Generates channels
 chan take_off[N], land[N], wait[N], gone;
-
 </declaration>
 	<template>
 		<name x="5" y="5">Plane</name>
@@ -18,8 +17,8 @@ chan take_off[N], land[N], wait[N], gone;
 		<declaration>// Place local declarations here.
 clock x;
 bool isTakeOff;</declaration>
-		<location id="id0" x="-806" y="-93">
-			<name x="-831" y="-127">Parked</name>
+		<location id="id0" x="-943" y="-93">
+			<name x="-968" y="-127">Parked</name>
 		</location>
 		<location id="id1" x="-518" y="-93">
 			<name x="-543" y="-127">Approaching</name>
@@ -33,90 +32,101 @@ bool isTakeOff;</declaration>
 			<name x="100" y="-136">FieldTakeOff</name>
 			<label kind="invariant" x="126" y="-76">x &lt;= 3</label>
 		</location>
-		<location id="id4" x="-187" y="-331">
-			<name x="-179" y="-365">FieldLanding</name>
-			<label kind="invariant" x="-197" y="-314">x &lt;= 6</label>
+		<location id="id4" x="-119" y="-331">
+			<name x="-111" y="-365">FieldLanding</name>
+			<label kind="invariant" x="-129" y="-314">x &lt;= 6</label>
 		</location>
-		<location id="id5" x="-357" y="34">
-			<name x="-367" y="0">Waiting</name>
-			<label kind="invariant" x="-374" y="51">x &lt;= 7</label>
+		<location id="id5" x="-518" y="85">
+			<name x="-528" y="51">Waiting</name>
+			<label kind="invariant" x="-535" y="102">x &lt;= 7</label>
 		</location>
-		<location id="id6" x="-187" y="-93">
-			<name x="-197" y="-127">Split</name>
+		<location id="id6" x="-119" y="-93">
+			<name x="-129" y="-127">Split</name>
 			<committed/>
 		</location>
-		<location id="id7" x="-357" y="-93">
-			<name x="-367" y="-127">IDLE</name>
-			<label kind="invariant" x="-367" y="-76">x &lt;= 5</label>
+		<location id="id7" x="-323" y="-93">
+			<name x="-333" y="-127">IDLE</name>
+			<label kind="invariant" x="-333" y="-76">x &lt;= 5</label>
 		</location>
 		<init ref="id0"/>
-		<transition>
+		<transition id="id8">
+			<source ref="id5"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-459" y="17">isTakeOff == false 
+&amp;&amp; x &gt;= 5</label>
+			<label kind="synchronisation" x="-459" y="59">land[id]!</label>
+			<label kind="assignment" x="-391" y="85">x := 0</label>
+			<nail x="-212" y="85"/>
+		</transition>
+		<transition id="id9">
+			<source ref="id5"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-722" y="25">isTakeOff == true 
+&amp;&amp; x &gt;= 5</label>
+			<label kind="synchronisation" x="-722" y="59">take_off[id]!</label>
+			<label kind="assignment" x="-696" y="85">x := 0</label>
+			<nail x="-816" y="85"/>
+		</transition>
+		<transition id="id10">
 			<source ref="id7"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-297" y="-110">x &gt;= 5</label>
-			<label kind="assignment" x="-297" y="-93">x := 0</label>
+			<label kind="guard" x="-246" y="-110">x &gt;= 5</label>
+			<label kind="assignment" x="-246" y="-93">x := 0</label>
 		</transition>
-		<transition>
+		<transition id="id11">
 			<source ref="id6"/>
 			<target ref="id3"/>
 			<label kind="guard" x="-85" y="-119">isTakeOff == true</label>
 		</transition>
-		<transition>
+		<transition id="id12">
 			<source ref="id6"/>
 			<target ref="id4"/>
-			<label kind="guard" x="-178" y="-229">isTakeOff == false</label>
+			<label kind="guard" x="-110" y="-229">isTakeOff == false</label>
 		</transition>
-		<transition>
-			<source ref="id5"/>
-			<target ref="id6"/>
-			<label kind="guard" x="-280" y="17">x &gt;= 5</label>
-			<label kind="assignment" x="-272" y="34">x:=0</label>
-			<nail x="-187" y="34"/>
-		</transition>
-		<transition>
+		<transition id="id13">
 			<source ref="id4"/>
 			<target ref="id0"/>
 			<label kind="guard" x="-518" y="-374">x &gt;= 4</label>
 			<label kind="synchronisation" x="-518" y="-357">gone!</label>
 			<label kind="assignment" x="-525" y="-322">x:=0</label>
-			<nail x="-807" y="-331"/>
+			<nail x="-943" y="-331"/>
 		</transition>
-		<transition>
+		<transition id="id14">
 			<source ref="id3"/>
 			<target ref="id2"/>
 			<label kind="guard" x="357" y="-144">x&gt;=1</label>
 			<label kind="synchronisation" x="357" y="-118">gone!</label>
 			<label kind="assignment" x="357" y="-93">x:=0</label>
 		</transition>
-		<transition>
+		<transition id="id15">
 			<source ref="id2"/>
 			<target ref="id1"/>
-			<label kind="guard" x="51" y="136">x &gt;= 5</label>
-			<label kind="synchronisation" x="51" y="153">land[id]!</label>
-			<label kind="assignment" x="61" y="179">x := 0,
+			<label kind="guard" x="42" y="-17">x &gt;= 5</label>
+			<label kind="synchronisation" x="42" y="0">land[id]!</label>
+			<label kind="assignment" x="52" y="26">x := 0,
 isTakeOff:=false</label>
-			<nail x="578" y="178"/>
-			<nail x="-518" y="178"/>
+			<nail x="569" y="25"/>
+			<nail x="-221" y="25"/>
 		</transition>
-		<transition>
+		<transition id="id16">
 			<source ref="id1"/>
 			<target ref="id7"/>
 			<label kind="guard" x="-442" y="-110">x &gt;= 5</label>
-			<label kind="assignment" x="-442" y="-93">x:=0</label>
+			<label kind="assignment" x="-433" y="-93">x:=0</label>
 		</transition>
-		<transition>
+		<transition id="id17">
 			<source ref="id1"/>
 			<target ref="id5"/>
-			<label kind="guard" x="-476" y="-8">x &lt;= 5</label>
-			<label kind="synchronisation" x="-475" y="9">wait[id]?</label>
-			<label kind="assignment" x="-476" y="42">x:=0</label>
-			<nail x="-493" y="34"/>
+			<label kind="guard" x="-586" y="-17">x &lt;= 5</label>
+			<label kind="synchronisation" x="-586" y="0">wait[id]?</label>
+			<label kind="assignment" x="-569" y="17">x:=0</label>
+			<nail x="-518" y="25"/>
 		</transition>
-		<transition>
+		<transition id="id18">
 			<source ref="id0"/>
 			<target ref="id1"/>
-			<label kind="synchronisation" x="-679" y="-110">take_off[id]!</label>
-			<label kind="assignment" x="-671" y="-93">x:=0,
+			<label kind="synchronisation" x="-782" y="-119">take_off[id]!</label>
+			<label kind="assignment" x="-765" y="-93">x:=0,
 isTakeOff:=true</label>
 		</transition>
 	</template>
@@ -125,65 +135,64 @@ isTakeOff:=true</label>
 		<declaration>clock x;
 planeID current;
 
-int in = 0;
+bool busy = false;
 </declaration>
-		<location id="id8" x="-765" y="-425">
+		<location id="id19" x="-765" y="-425">
 			<name x="-775" y="-459">IDLE</name>
 		</location>
-		<location id="id9" x="-765" y="-161">
+		<location id="id20" x="-765" y="-161">
 			<name x="-775" y="-195">Evaluating</name>
-			<label kind="invariant" x="-782" y="-144">x &lt;= 5</label>
+			<urgent/>
 		</location>
-		<init ref="id8"/>
-		<transition>
-			<source ref="id8"/>
-			<target ref="id8"/>
+		<init ref="id19"/>
+		<transition id="id21">
+			<source ref="id19"/>
+			<target ref="id19"/>
 			<label kind="synchronisation" x="-773" y="-544">gone?</label>
-			<label kind="assignment" x="-773" y="-527">in--</label>
+			<label kind="assignment" x="-799" y="-527">busy := false</label>
 			<nail x="-680" y="-510"/>
 			<nail x="-841" y="-510"/>
 		</transition>
-		<transition>
-			<source ref="id9"/>
-			<target ref="id9"/>
-			<label kind="synchronisation" x="-773" y="-59">gone?</label>
-			<label kind="assignment" x="-765" y="-42">in--</label>
+		<transition id="id22">
+			<source ref="id20"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-782" y="-68">gone?</label>
+			<label kind="assignment" x="-799" y="-51">busy := false</label>
 			<nail x="-833" y="-68"/>
 			<nail x="-688" y="-68"/>
 		</transition>
-		<transition>
-			<source ref="id9"/>
-			<target ref="id8"/>
-			<label kind="guard" x="-1130" y="-314">in &lt;= 1 || x &gt;= 5</label>
+		<transition id="id23">
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-969" y="-187">busy == false</label>
+			<label kind="assignment" x="-960" y="-161">busy := true</label>
 			<nail x="-1020" y="-161"/>
 			<nail x="-1020" y="-425"/>
 		</transition>
-		<transition>
-			<source ref="id9"/>
-			<target ref="id8"/>
-			<label kind="guard" x="-663" y="-195">in &gt; 1 &amp;&amp; x &lt;= 5</label>
-			<label kind="synchronisation" x="-629" y="-178">wait[current]!</label>
-			<nail x="-510" y="-161"/>
-			<nail x="-510" y="-425"/>
+		<transition id="id24">
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-612" y="-195">busy == true</label>
+			<label kind="synchronisation" x="-612" y="-178">wait[current]!</label>
+			<nail x="-476" y="-161"/>
+			<nail x="-476" y="-425"/>
 		</transition>
-		<transition>
-			<source ref="id8"/>
-			<target ref="id9"/>
+		<transition id="id25">
+			<source ref="id19"/>
+			<target ref="id20"/>
 			<label kind="select" x="-680" y="-382">e : planeID</label>
 			<label kind="synchronisation" x="-663" y="-365">land[e]?</label>
 			<label kind="assignment" x="-705" y="-323">x:=0,
-current:=e,
-in++</label>
+current:=e</label>
 			<nail x="-620" y="-297"/>
 		</transition>
-		<transition>
-			<source ref="id8"/>
-			<target ref="id9"/>
+		<transition id="id26">
+			<source ref="id19"/>
+			<target ref="id20"/>
 			<label kind="select" x="-918" y="-382">e : planeID</label>
 			<label kind="synchronisation" x="-918" y="-365">take_off[e]?</label>
 			<label kind="assignment" x="-867" y="-323">x:=0,
-current:=e,
-in++</label>
+current:=e</label>
 			<nail x="-901" y="-297"/>
 		</transition>
 	</template>
@@ -195,44 +204,54 @@ system Plane, Controller;
 	<queries>
 		<query>
 			<formula>A[] not deadlock</formula>
-			<comment></comment>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2023-06-23 17:34:37 +0100">
+			</result>
 		</query>
 		<query>
-			<formula>A[] forall (i:planeID) forall (j:planeID) not ((Plane(i).FieldLanding &amp;&amp; Plane(j).FieldTakeOff) || (Plane(i).FieldTakeOff &amp;&amp; Plane(j).FieldLanding)) &amp;&amp; ((Plane(i).FieldTakeOff &amp;&amp; Plane(j).FieldTakeOff) &amp;&amp; (Plane(i).FieldLanding &amp;&amp; Plane(j).FieldLanding) imply i == j)</formula>
+			<formula>A[] forall (i:planeID) not(exists (j:planeID) i != j &amp;&amp; ((Plane(i).FieldLanding &amp;&amp; (Plane(j).FieldLanding || Plane(j).FieldTakeOff)) || (Plane(i).FieldTakeOff &amp;&amp; (Plane(j).FieldLanding || Plane(j).FieldTakeOff))))</formula>
 			<comment>only 1 plane can use the field at a time;</comment>
+			<option key="--diagnostic" value="0"/>
+			<result outcome="success" type="quality" timestamp="2023-06-25 00:24:47 +0100">
+				<option key="--diagnostic" value="0"/>
+			</result>
 		</query>
 		<query>
-			<formula></formula>
+			<formula>Controller.Evaluating --&gt; Controller.IDLE</formula>
 			<comment>a Controller component receives requests to land or to take off, and replies with a wait signal
 when the field is not available</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-23 18:49:10 +0100">
+			</result>
 		</query>
 		<query>
-			<formula></formula>
+			<formula>E[] forall (i:planeID) Plane(i).Approaching imply ((Plane(i).FieldLanding || Plane(i).FieldTakeOff) &amp;&amp; (Plane(i).Parked || Plane(i).Flying))</formula>
 			<comment>each plane sends requests to the Controller to land or to take off, and sends notifications
 when the field becomes free</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-23 18:24:20 +0100">
+			</result>
 		</query>
 		<query>
 			<formula>A[] not (Controller.Evaluating &amp;&amp; Controller.x &gt; 5)</formula>
 			<comment>the Controller has 5 time units to notify a plane to wait</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-23 17:50:25 +0100">
+			</result>
 		</query>
 		<query>
-			<formula>A[] forall (i:planeID) Plane(i).IDLE imply (Plane(i).x&gt;=5 &amp;&amp; ((Plane(i).FieldTakeOff || Plane(i).FieldLanding) imply Plane(i).x &gt;= 5))</formula>
+			<formula>A&lt;&gt; forall (i:planeID) (Plane(i).Approaching &amp;&amp; Plane(i).x == 5) imply ((Plane(i).IDLE &amp;&amp; Plane(i).x == 5) imply (Plane(i).FieldLanding || Plane(i).FieldTakeOff))</formula>
 			<comment>after 5 time units from requesting access to the field and with no wait signal, the planes take
 another 5 time units to reach the field</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-23 18:04:45 +0100">
+			</result>
 		</query>
 		<query>
-			<formula>A[] forall (i:planeID) Plane(i).Flying imply (Plane(i).x&gt;=1 and Plane(i).x&lt;=3) &amp;&amp; Plane(i).Parked imply (Plane(i).x&gt;=4 and Plane(i).x&lt;=6) </formula>
+			<formula>A&lt;&gt; forall (i:planeID) ((Plane(i).FieldTakeOff &amp;&amp; Plane(i).x &gt;= 1 &amp;&amp; Plane(i).x &lt;=4) imply Plane(i).Flying) || ((Plane(i).FieldLanding &amp;&amp; Plane(i).x &gt;= 3 &amp;&amp; Plane(i).x &lt;= 6) imply Plane(i).Parked)</formula>
 			<comment>each plane takes non-deterministically between 1-3 time units to take off, and between 4-6
-time units to land and park;
-
-status: imcompleto, falta definir os limites inferiores</comment>
+time units to land and park;</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-23 17:59:55 +0100">
+			</result>
 		</query>
 		<query>
-			<formula></formula>
-			<comment>after taking off and after parking the planes notify the Controller with a gone signal</comment>
-		</query>
-		<query>
-			<formula>A[] forall (i:planeID) (Plane(i).FieldTakeOff || Plane(i).FieldLanding) imply (Plane(i).x&gt;=5 and Plane(i).x&lt;=7)</formula>
+			<formula>forall (i:planeID) ((Plane(i).Waiting &amp;&amp; Plane(i).x &gt;= 5 &amp;&amp; Plane(i).x &lt;= 7) --&gt; (Plane(i).FieldTakeOff || Plane(i).FieldLanding))</formula>
 			<comment>if a plane is told to wait, we assume it will take between 5-7 time units to reach the field</comment>
 		</query>
 	</queries>

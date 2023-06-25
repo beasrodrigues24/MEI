@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
-	<declaration>// Place global declarations here.
-
-//No. of planes 
-const int N = 2;
+	<declaration>//No. of planes 
+const int N = 4;
 
 //Generate plane ids
 typedef int [0, N-1] planeID;
 
-// Used for indexs in appr matrix
+// Used for indexes in appr matrix
 const int TAKEOFF = 0;
 const int LAND = 1;
 
@@ -20,9 +18,10 @@ urgent chan go[N];
 	<template>
 		<name x="5" y="5">Plane</name>
 		<parameter>const planeID id</parameter>
-		<declaration>// Place local declarations here.
+		<declaration>// Internal clock
 clock x;
-int action;</declaration>
+// Action, can be TAKEOFF or LAND
+int[0,1] action;</declaration>
 		<location id="id0" x="-943" y="-93">
 			<name x="-968" y="-127">Parked</name>
 		</location>
@@ -134,22 +133,23 @@ action:=TAKEOFF</label>
 	</template>
 	<template>
 		<name>Controller</name>
-		<declaration>planeID current;
-
+		<declaration>// Current plane being handled
+planeID current;
+// Represents the state of the field as busy or not
 bool busy = false;
-
+// List that represents a N sized queue (at most), with planes interested in using the field
 planeID queue[N];
-
+// Queue size
 int[0,N] len = 0;
-
+// Returns if the field is free
 bool fieldIsFree() {
     return busy == false;
 }
-
+// Adds a planeID to the queue
 void enqueue(planeID id) {
     queue[len++] = id;
 }
-
+// Removes a plane from the queue
 void dequeue() {
      int i = 0;
      len -= 1;
@@ -159,11 +159,11 @@ void dequeue() {
          i++;
      }
 }
-
+// Returns if the queue is empty
 bool isEmpty() {
     return len == 0;
 }
-
+// Returns the plane that has the next turn
 planeID front() {
     return queue[0];
 }</declaration>
@@ -178,8 +178,9 @@ planeID front() {
 		<transition id="id22">
 			<source ref="id20"/>
 			<target ref="id21"/>
-			<label kind="select" x="-756" y="-357">e : planeID, 
+			<label kind="select" x="-756" y="-374">e : planeID, 
 t : int[0,1]</label>
+			<label kind="guard" x="-756" y="-331">!fieldIsFree() || isEmpty()</label>
 			<label kind="synchronisation" x="-756" y="-306">appr[t][e]?</label>
 			<label kind="assignment" x="-756" y="-280">current := e</label>
 		</transition>
@@ -212,8 +213,8 @@ dequeue()</label>
 		<transition id="id26">
 			<source ref="id21"/>
 			<target ref="id20"/>
-			<label kind="guard" x="-628" y="-195">!fieldIsFree() || !isEmpty()</label>
-			<label kind="synchronisation" x="-628" y="-178">wait[current]!</label>
+			<label kind="guard" x="-629" y="-204">!fieldIsFree() || !isEmpty()</label>
+			<label kind="synchronisation" x="-629" y="-187">wait[current]!</label>
 			<label kind="assignment" x="-628" y="-161">enqueue(current)</label>
 			<nail x="-382" y="-161"/>
 			<nail x="-382" y="-425"/>
@@ -227,60 +228,50 @@ system Plane, Controller;
 	<queries>
 		<query>
 			<formula>A[] not deadlock</formula>
+			<comment>No deadlocks allowed.</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-25 18:11:17 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>A[] Controller.len &lt; N</formula>
+			<comment>There can never be N planes in the queue.</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:01:48 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Plane(1).Flying</formula>
+			<comment>Eventually, plane 1 flies.</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-25 18:37:25 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>A[] forall (i:planeID) forall (j:planeID) (Plane(i).FieldLanding || Plane(i).FieldTakeOff) &amp;&amp; (Plane(j).FieldLanding || Plane(j).FieldTakeOff) imply i == j</formula>
+			<comment>The field can only be accessed by one plane at a time.</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:09:08 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; (Plane(1).FieldTakeOff || Plane(1).FieldLanding) &amp;&amp; forall (i:planeID) i != 1 imply Plane(i).Waiting</formula>
+			<comment>There will be a state where plane 1 is using the field and all other planes will be waiting for their turn.</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:18:25 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>Plane(1).Waiting --&gt; (Plane(1).Flying || Plane(1).Parked)</formula>
+			<comment>If plane 1 is waiting, its turn will eventually arrive.</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:21:16 +0100">
+			</result>
+		</query>
+		<query>
+			<formula>E[] Plane(1).Parked</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2023-06-25 15:57:15 +0100">
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:25:15 +0100">
 			</result>
 		</query>
 		<query>
-			<formula>A[] forall (i:planeID) not(exists (j:planeID) i != j &amp;&amp; ((Plane(i).FieldLanding &amp;&amp; (Plane(j).FieldLanding || Plane(j).FieldTakeOff)) || (Plane(i).FieldTakeOff &amp;&amp; (Plane(j).FieldLanding || Plane(j).FieldTakeOff))))</formula>
-			<comment>only 1 plane can use the field at a time;</comment>
-			<option key="--diagnostic" value="0"/>
-			<result outcome="success" type="quality" timestamp="2023-06-25 15:57:18 +0100">
-				<option key="--diagnostic" value="0"/>
-			</result>
-		</query>
-		<query>
-			<formula>Controller.Evaluating --&gt; Controller.IDLE</formula>
-			<comment>a Controller component receives requests to land or to take off, and replies with a wait signal
-when the field is not available</comment>
-			<result outcome="success" type="quality" timestamp="2023-06-23 18:49:10 +0100">
-			</result>
-		</query>
-		<query>
-			<formula>E[] forall (i:planeID) Plane(i).Approaching imply ((Plane(i).FieldLanding || Plane(i).FieldTakeOff) &amp;&amp; (Plane(i).Parked || Plane(i).Flying))</formula>
-			<comment>each plane sends requests to the Controller to land or to take off, and sends notifications
-when the field becomes free</comment>
-			<result outcome="success" type="quality" timestamp="2023-06-23 18:24:20 +0100">
-			</result>
-		</query>
-		<query>
-			<formula>A[] not (Controller.Evaluating &amp;&amp; Controller.x &gt; 5)</formula>
-			<comment>the Controller has 5 time units to notify a plane to wait</comment>
-			<result outcome="success" type="quality" timestamp="2023-06-23 17:50:25 +0100">
-			</result>
-		</query>
-		<query>
-			<formula>A&lt;&gt; forall (i:planeID) (Plane(i).Approaching &amp;&amp; Plane(i).x == 5) imply ((Plane(i).IDLE &amp;&amp; Plane(i).x == 5) imply (Plane(i).FieldLanding || Plane(i).FieldTakeOff))</formula>
-			<comment>after 5 time units from requesting access to the field and with no wait signal, the planes take
-another 5 time units to reach the field</comment>
-			<result outcome="success" type="quality" timestamp="2023-06-23 18:04:45 +0100">
-			</result>
-		</query>
-		<query>
-			<formula>A&lt;&gt; forall (i:planeID) ((Plane(i).FieldTakeOff &amp;&amp; Plane(i).x &gt;= 1 &amp;&amp; Plane(i).x &lt;=4) imply Plane(i).Flying) || ((Plane(i).FieldLanding &amp;&amp; Plane(i).x &gt;= 3 &amp;&amp; Plane(i).x &lt;= 6) imply Plane(i).Parked)</formula>
-			<comment>each plane takes non-deterministically between 1-3 time units to take off, and between 4-6
-time units to land and park;</comment>
-			<result outcome="success" type="quality" timestamp="2023-06-23 17:59:55 +0100">
-			</result>
-		</query>
-		<query>
-			<formula>forall (i:planeID) ((Plane(i).Waiting &amp;&amp; Plane(i).x &gt;= 5 &amp;&amp; Plane(i).x &lt;= 7) --&gt; (Plane(i).FieldTakeOff || Plane(i).FieldLanding))</formula>
-			<comment>if a plane is told to wait, we assume it will take between 5-7 time units to reach the field</comment>
-		</query>
-		<query>
-			<formula>A&lt;&gt; forall (i:planeID) Plane(i).FieldLanding</formula>
+			<formula>Plane(1).Flying --&gt; Plane(1).Approaching</formula>
 			<comment/>
-			<result outcome="failure" type="quality" timestamp="2023-06-25 15:34:50 +0100">
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:28:14 +0100">
 			</result>
 		</query>
 	</queries>

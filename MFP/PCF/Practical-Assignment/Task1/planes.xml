@@ -229,7 +229,7 @@ system Plane, Controller;
 		<query>
 			<formula>A[] not deadlock</formula>
 			<comment>No deadlocks allowed.</comment>
-			<result outcome="success" type="quality" timestamp="2023-06-25 18:11:17 +0100">
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:40:08 +0100">
 			</result>
 		</query>
 		<query>
@@ -241,7 +241,7 @@ system Plane, Controller;
 		<query>
 			<formula>E&lt;&gt; Plane(1).Flying</formula>
 			<comment>Eventually, plane 1 flies.</comment>
-			<result outcome="success" type="quality" timestamp="2023-06-25 18:37:25 +0100">
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:40:10 +0100">
 			</result>
 		</query>
 		<query>
@@ -259,19 +259,19 @@ system Plane, Controller;
 		<query>
 			<formula>Plane(1).Waiting --&gt; (Plane(1).Flying || Plane(1).Parked)</formula>
 			<comment>If plane 1 is waiting, its turn will eventually arrive.</comment>
-			<result outcome="success" type="quality" timestamp="2023-06-25 19:21:16 +0100">
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:40:12 +0100">
 			</result>
 		</query>
 		<query>
 			<formula>E[] Plane(1).Parked</formula>
-			<comment/>
+			<comment>It's possible for plane 1 to never leave the parked state.</comment>
 			<result outcome="success" type="quality" timestamp="2023-06-25 19:25:15 +0100">
 			</result>
 		</query>
 		<query>
 			<formula>Plane(1).Flying --&gt; Plane(1).Approaching</formula>
-			<comment/>
-			<result outcome="success" type="quality" timestamp="2023-06-25 19:28:14 +0100">
+			<comment>If a plane flies, it will eventually reapproach to land.</comment>
+			<result outcome="success" type="quality" timestamp="2023-06-25 19:35:27 +0100">
 			</result>
 		</query>
 	</queries>

@@ -11,24 +11,14 @@ data ProgTerm = Asg Vars LTerm | Choice ProbRep ProgTerm ProgTerm | Seq ProgTerm
 chMem :: Vars -> Double -> (Vars -> Double) -> (Vars -> Double)
 chMem x r m = \a -> if a /= x then m a else r 
 
--- Multiplies a whole dist by a probability
-multiply :: Dist (Vars -> Double) -> ProbRep -> [((Vars -> Double), ProbRep)]
-multiply (D l) p = [(m, pi * p) | (m, pi) <- l]
--- Same thing: multiply (D ((m,pi):t)) p = mkD $ ([(m,pi*p)] ++ multiply t p)
-
--- Applies a term q to all the possibilities from xs, updating the probability
-apply :: Dist (Vars -> Double) -> ProgTerm -> Dist (Vars -> Double)
-apply (D l) q = mkD $ concatMap (\(m, p) -> multiply (wsem q m) p) l
--- Same thing: apply (D ((m,p):t)) q = mkD $ ((multiply (wsem q m) p) ++ apply t q)
-
 -- Evaluates a term
 wsem :: ProgTerm -> (Vars -> Double) -> Dist (Vars -> Double)
 wsem (Asg x t) m = return $ chMem x (sem t m) m 
 wsem (Choice pb p q) m = do pD <- wsem p m ; qD <- wsem q m ; choose pb pD qD
-wsem (Seq p q) m = apply (wsem p m) q
+wsem (Seq p q) m = wsem p m >>= wsem q 
 wsem (Ife b p q) m | bsem b m = wsem p m 
-                   | otherwise = wsem q m
-wsem (Wh b p) m | bsem b m = apply (wsem p m) (Wh b p) 
+                    | otherwise = wsem q m
+wsem (Wh b p) m | bsem b m = wsem p m >>= wsem (Wh b p) 
                 | otherwise = return m
 
 lexy = Leq x y

@@ -8,8 +8,8 @@ Contains practical assignments, exercises and other materials about the majors I
 
 #### Major: [Formal Programming Methods](MFP)
 
-[**VF**](MFP/VF) -> Formal Verification 
-
-[**PCF**](MFP/PCF) -> Cyber-Physical Programming
-
-[**CSI**](MFP/CSI) -> Information Systems Calculus
+Abreviation        | Name                       | Grade 
+:----:             |------------------------------| :----:
+[**VF**](MFP/VF)   | Formal Verification          |  18
+[**PCF**](MFP/PCF) | Cyber-Physical Programming   |  17   
+[**CSI**](MFP/CSI) | Information Systems Calculus |  TBD

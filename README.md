@@ -12,4 +12,4 @@ Abreviation        | Name                       | Grade
 :----:             |------------------------------| :----:
 [**VF**](MFP/VF)   | Formal Verification          |  18
 [**PCF**](MFP/PCF) | Cyber-Physical Programming   |  17   
-[**CSI**](MFP/CSI) | Information Systems Calculus |  TBD
+[**CSI**](MFP/CSI) | Information Systems Calculus |  15
